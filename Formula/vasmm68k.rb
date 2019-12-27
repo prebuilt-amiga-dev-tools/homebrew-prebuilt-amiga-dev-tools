@@ -3,6 +3,7 @@ class Vasmm68k < Formula
     homepage "http://sun.hasenbraten.de/vasm"
     url "http://server.owl.de/~frank/tags/vasm1_8f.tar.gz"
     sha256 "9a97952951912b070a1b9118a466a3cd8024775be45266ede3f78b2f99ecc1f2"
+    version "1.8f"
   
     def install
       # ENV.deparallelize
