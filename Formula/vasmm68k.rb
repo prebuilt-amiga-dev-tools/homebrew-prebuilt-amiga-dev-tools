@@ -1,9 +1,9 @@
 class Vasmm68k < Formula
     desc "Cross-assembler for 680x0 processors / Amiga OS"
     homepage "http://sun.hasenbraten.de/vasm"
+    version "1.8e"
     url "http://server.owl.de/~frank/tags/vasm1_8e.tar.gz"
     sha256 "abcd1234"
-    version "1.8e"
   
     def install
       # ENV.deparallelize
