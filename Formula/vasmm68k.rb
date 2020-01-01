@@ -12,6 +12,7 @@ class Vasmm68k < Formula
     system "(make CPU=m68k SYNTAX=std && chmod ugo+rx vasmm68k_std)"
     bin.install "vasmm68k_mot"
     bin.install "vasmm68k_std"
+    bin.install "vobjdump"
   end
 
   test do
@@ -50,5 +51,45 @@ class Vasmm68k < Formula
 
     assert_match version.to_s, shell_output(["#{bin}/vasmm68k_std", "-Fhunk", "-o", testpath/"test_std.o", testpath/"test_std.s"].join(" "))
     assert_match "e06a1c7ade3326f33d1f65b0ebfc57cf27b70e1d", Digest::SHA1.hexdigest(File.read(testpath/"test_std.o"))
+
+    # Verify that vobjdump can decompile a given file and that the resulting text file has the right content
+
+    (testpath/"test_vobjdump.o").write [\
+      "564F424A0108044D36386B000203636F64650001030100006461746100010302"\
+      "00006D61696E00018400440000010000636F6465006163727800010204000470"\
+      "004E75646174610061647277000001040104000000000100002084FFFFFFFF00"\
+      "03",
+    ].pack("H*")
+
+    (testpath/"test_vobjdump.dis.expected").write [
+      "",
+      "------------------------------------------------------------------------------",
+      "VOBJ M68k (big endian), 8 bits per byte, 4 bytes per word.",
+      "3 symbols.",
+      "2 sections.",
+      "",
+      "------------------------------------------------------------------------------",
+      '00000030: SECTION "code" (attributes="acrx")',
+      "Flags: 1         Alignment: 2      Total size: 4         File size: 4        ",
+      "",
+      "------------------------------------------------------------------------------",
+      '00000043: SECTION "data" (attributes="adrw")',
+      "Flags: 0         Alignment: 1      Total size: 4         File size: 4        ",
+      "1 Relocation present.",
+      "",
+      "file offs sectoffs pos sz mask     type     symbol+addend",
+      "00000056: 00000000  00 32 ffffffff ABS      main+0",
+      "",
+      "",
+      "------------------------------------------------------------------------------",
+      "SYMBOL TABLE",
+      "file offs bind size     type def      value    name",
+      "0000000e: LOCL 00000000 sect     code        0 code",
+      "00000018: LOCL 00000000 sect     data        0 data",
+      "00000022: LOCL 00000000          code        0 main",
+    ].join("\n") + "\n"
+
+    shell_output(["#{bin}/vobjdump", testpath/"test_vobjdump.o", ">", testpath/"test_vobjdump.dis"].join(" "))
+    assert_match Digest::SHA1.hexdigest(File.read(testpath/"test_vobjdump.dis.expected")), Digest::SHA1.hexdigest(File.read(testpath/"test_vobjdump.dis"))
   end
 end
