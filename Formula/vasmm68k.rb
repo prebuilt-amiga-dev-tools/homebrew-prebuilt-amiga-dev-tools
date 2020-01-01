@@ -4,6 +4,7 @@ class Vasmm68k < Formula
   url "http://server.owl.de/~frank/tags/vasm1_8e.tar.gz"
   version "1.8e"
   sha256 "5f1ebb8b81d2d9664e5c2646f1abbc5fb795642ed117f55e84a66590a62760ff"
+  version_scheme 1
 
   def install
     # ENV.deparallelize
