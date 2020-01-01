@@ -14,8 +14,40 @@ class Vasmm68k < Formula
   end
 
   test do
-    # Disable tests for the time being
-    # assert_match version.to_s, shell_output("#{bin}/vasmm68k_mot")
-    # assert_match version.to_s, shell_output("#{bin}/vasmm68k_std")
+    require "digest/md5"
+
+    # Verify that vasmm68k_mot can assemble a given file and that the resulting object file has the right content
+
+    (testpath/"test_mot.s").write <<~EOS
+      	section	code,code
+
+      main:
+      	moveq	#0,d0
+      	rts
+
+      	section	data,data
+
+      	dc.l	main
+    EOS
+
+    assert_match version.to_s, shell_output(["#{bin}/vasmm68k_mot", "-Fhunk", "-o", testpath/"test_mot.o", testpath/"test_mot.s"].join(" "))
+    assert_match "46f347f0e0632a53e61130eb7f34f87fc17ffcaf", Digest::SHA1.hexdigest(File.read(testpath/"test_mot.o"))
+
+    # Verify that vasmm68k_std can assemble a given file and that the resulting object file has the right content
+
+    (testpath/"test_std.s").write <<~EOS
+      	.section	code
+
+      main:
+      	moveq	#0,d0
+      	rts
+
+      	.section	data
+
+      	.long	main
+    EOS
+
+    assert_match version.to_s, shell_output(["#{bin}/vasmm68k_std", "-Fhunk", "-o", testpath/"test_std.o", testpath/"test_std.s"].join(" "))
+    assert_match "e06a1c7ade3326f33d1f65b0ebfc57cf27b70e1d", Digest::SHA1.hexdigest(File.read(testpath/"test_std.o"))
   end
 end
