@@ -1,0 +1,26 @@
+
+name: Pull Request
+
+on:
+  # Always build pull requests
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    name: Build PR
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install current PR as tap
+        run: |
+          github_user=kalmalyzer
+          github_tap_repo=homebrew-prebuilt-amiga-dev-tools
+          HOMEBREW_TAP_DIR="/usr/local/Homebrew/Library/Taps/$(github_user)/$(github_tap_repo)"
+          mkdir -p "${HOMEBREW_TAP_DIR}"
+          rm -rf "${HOMEBREW_TAP_DIR}"
+          ln -s "${PWD}" "${HOMEBREW_TAP_DIR}"
+      - name: Run brew test-bot
+        run: brew test-bot
+ 
