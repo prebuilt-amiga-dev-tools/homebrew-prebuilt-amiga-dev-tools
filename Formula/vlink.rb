@@ -6,6 +6,10 @@ class Vlink < Formula
   sha256 "5ffeb9f544628d69257185771199530f31800a6949b4cc52d5da2ded72c212bc"
   version_scheme 1
 
+  head do
+    url "http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz"
+  end
+
   def install
     # ENV.deparallelize
     system "(make && chmod ugo+rx vlink)"
